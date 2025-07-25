@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartFeed — Dev News Aggregator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-light: #f9fafb;
+      --bg-dark: #0f172a;
+      --text-light: #1e293b;
+      --text-dark: #f9fafb;
+      --accent: #6366f1;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-bg-dark: rgba(30, 41, 59, 0.9);
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    header {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem 1rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    #searchInput {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      background: white;
+      min-width: 220px;
+    }
+
+    body.dark #searchInput {
+      background: #1e293b;
+      border-color: #334155;
+      color: white;
+    }
+
+    .toggle-btn {
+      padding: 8px 12px;
+      font-size: 1.2rem;
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      padding: 1rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .categories button {
+      padding: 8px 18px;
+      border: none;
+      border-radius: 999px;
+      background: #e2e8f0;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .categories button:hover {
+      background: #cbd5e1;
+    }
+
+    .categories button.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    body.dark .categories button {
+      background: #334155;
+      color: white;
+    }
+
+    .feed {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .article {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    body.dark .article {
+      background: var(--card-bg-dark);
+    }
+
+    .article h2 {
+      font-size: 1.4rem;
+      margin: 0;
+    }
+
+    .article p {
+      font-size: 1rem;
+      color: #475569;
+      margin: 0;
+    }
+
+    body.dark .article p {
+      color: #cbd5e1;
+    }
+
+    .meta {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 5px;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    body.dark .tag {
+      background: #312e81;
+      color: #c7d2fe;
+    }
+
+    .author-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .author-info img {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #cbd5e1;
+    }
+
+    .article a.read-more {
+      margin-top: 10px;
+      color: var(--accent);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .article a.read-more:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      text-align: center;
+      color: crimson;
+      font-weight: bold;
+    }
+
+    .loader {
+      text-align: center;
+      font-size: 1.2rem;
+      color: gray;
+      padding-bottom: 2rem;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      padding: 2rem 1rem;
+      color: #94a3b8;
+    }
+
+    @media(max-width: 600px) {
+      header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      .controls {
+        flex-direction: column;
+        width: 100%;
+      }
+      #searchInput {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SmartFeed</h1>
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="🔍 Search by title..." />
+      <button class="toggle-btn" id="toggleMode">🌙</button>
+    </div>
+  </header>
+
+  <nav class="categories" id="categoryList">
+    <button class="active" data-cat="web">Web Dev</button>
+    <button data-cat="programming">Programming</button>
+    <button data-cat="ai">AI</button>
+    <button data-cat="cloud">Cloud</button>
+    <button data-cat="javascript">JavaScript</button>
+    <button data-cat="career">Career</button>
+    <button data-cat="security">Security</button>
+  </nav>
+
+  <main>
+    <section id="newsFeed" class="feed"></section>
+    <div id="error" class="error-message"></div>
+    <div id="loader" class="loader" style="display:none;">🔄 Loading more articles...</div>
+  </main>
+
+ 
+  <script>
+    const feed = document.getElementById('newsFeed');
+    const error = document.getElementById('error');
+    const search = document.getElementById('searchInput');
+    const catBtns = document.querySelectorAll('[data-cat]');
+    const modeToggle = document.getElementById("toggleMode");
+    const loader = document.getElementById("loader");
+
+    let articles = [];
+    let selected = 'web';
+    let page = 1;
+    let isLoading = false;
+    let endReached = false;
+
+    const fetchArticles = async (tag, append = false) => {
+      if (isLoading || endReached) return;
+      isLoading = true;
+      loader.style.display = "block";
+      error.textContent = '';
+      try {
+        const res = await fetch(`https://dev.to/api/articles?tag=${tag}&per_page=10&page=${page}`);
+        if (!res.ok) throw new Error("API error");
+        const data = await res.json();
+        const englishOnly = data.filter(a => a.language === 'en');
+        if (!englishOnly.length) {
+          endReached = true;
+          if (!append) error.textContent = "⚠️ No English articles found.";
+          loader.style.display = "none";
+          return;
+        }
+        if (append) {
+          articles = [...articles, ...englishOnly];
+        } else {
+          articles = englishOnly;
+          feed.innerHTML = "";
+        }
+        renderArticles(englishOnly, append);
+        page++;
+      } catch (err) {
+        console.error(err.message);
+        error.textContent = "🚫 Could not fetch articles. Try again later.";
+      }
+      loader.style.display = "none";
+      isLoading = false;
+    };
+
+    const renderArticles = (data, append = false) => {
+      data.forEach((a) => {
+        const card = document.createElement("div");
+        card.className = "article";
+        card.innerHTML = `
+          <h2>${a.title}</h2>
+          <p>${a.description || a.excerpt || "No description available."}</p>
+          <div class="tags">${a.tag_list.map(tag => `<span class="tag">#${tag}</span>`).join('')}</div>
+          <div class="author-info">
+            <img src="${a.user.profile_image}" alt="${a.user.name}" />
+            <div>
+              <div class="meta">✍️ ${a.user.name}</div>
+              <div class="meta">🗓️ ${new Date(a.published_at).toLocaleDateString()} · ⏱️ ${a.reading_time_minutes} min read</div>
+            </div>
+          </div>
+          <a class="read-more" href="${a.url}" target="_blank">Read Full Article →</a>
+        `;
+        feed.appendChild(card);
+      });
+    };
+
+    catBtns.forEach(btn =>
+      btn.addEventListener("click", () => {
+        catBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        selected = btn.dataset.cat;
+        page = 1;
+        endReached = false;
+        search.value = "";
+        fetchArticles(selected, false);
+      })
+    );
+
+    search.addEventListener("input", () => {
+      const q = search.value.toLowerCase();
+      const results = articles.filter(a => a.title.toLowerCase().includes(q));
+      feed.innerHTML = "";
+      renderArticles(results);
+    });
+
+    modeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      modeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      fetchArticles(selected);
+    });
+
+    window.addEventListener("scroll", () => {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight - 50) {
+        fetchArticles(selected, true);
+      }
+    });
+  </script>
+</body>
+</html>
