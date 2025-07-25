@@ -1,6 +1,6 @@
 # SmartFeed 
 
-SmartFeed is a responsive and user-friendly developer news aggregator web app built using vanilla JavaScript, HTML, and CSS. 
+SmartFeed is a responsive and user-friendly developer news aweb app built using vanilla JavaScript, HTML, and CSS. 
 
 It pulls the latest  articles from [dev.to](https://dev.to/) via their public API, categorized by popular dev topics.
 
