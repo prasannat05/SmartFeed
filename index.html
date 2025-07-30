@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -7,14 +6,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-light: #f9fafb;
+      --bg-light: #f4f6f8;
       --bg-dark: #0f172a;
       --text-light: #1e293b;
       --text-dark: #f9fafb;
-      --accent: #6366f1;
-      --card-bg: rgba(255, 255, 255, 0.9);
-      --card-bg-dark: rgba(30, 41, 59, 0.9);
-      --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      --accent: #3b82f6;
+      --accent-dark: #2563eb;
+      --card-bg: #ffffff;
+      --card-bg-dark: #1e293b;
+      --card-hover: #f1f5f9;
+      --shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
 
     * {
@@ -35,19 +36,22 @@
     }
 
     header {
+      position: sticky;
+      top: 0;
+      background: inherit;
       max-width: 1200px;
       margin: auto;
-      padding: 2rem 1rem 1rem;
+      padding: 1rem 2rem;
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e2e8f0;
     }
 
-    
     h1 {
-      margin: 0;
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 800;
     }
 
@@ -60,24 +64,23 @@
     #searchInput {
       padding: 10px 14px;
       border-radius: 8px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid #d1d5db;
       font-size: 1rem;
       background: white;
-      min-width: 220px;
     }
 
     body.dark #searchInput {
       background: #1e293b;
-      border-color: #334155;
+      border-color: #475569;
       color: white;
     }
 
     .toggle-btn {
-      padding: 8px 12px;
-      font-size: 1.2rem;
+      padding: 8px 14px;
+      font-size: 1rem;
       background: var(--accent);
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       color: white;
       cursor: pointer;
     }
@@ -85,27 +88,22 @@
     .categories {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
       justify-content: center;
-      padding: 1rem;
-      max-width: 1200px;
-      margin: auto;
+      padding: 1rem 2rem;
     }
 
     .categories button {
-      padding: 8px 18px;
-      border: none;
+      padding: 6px 16px;
       border-radius: 999px;
       background: #e2e8f0;
+      border: none;
       font-weight: 600;
       cursor: pointer;
     }
 
+    .categories button.active,
     .categories button:hover {
-      background: #cbd5e1;
-    }
-
-    .categories button.active {
       background: var(--accent);
       color: white;
     }
@@ -115,23 +113,32 @@
       color: white;
     }
 
-    .feed {
-      max-width: 900px;
-      margin: 2rem auto;
+    main {
+      max-width: 1000px;
+      margin: 1rem auto 3rem;
       padding: 0 1rem;
+    }
+
+    .feed {
       display: flex;
       flex-direction: column;
-      gap: 28px;
+      gap: 1.5rem;
     }
 
     .article {
       background: var(--card-bg);
-      border-radius: 14px;
       padding: 24px;
+      border-radius: 16px;
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
       gap: 12px;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .article:hover {
+      transform: translateY(-4px);
+      background: var(--card-hover);
     }
 
     body.dark .article {
@@ -139,14 +146,15 @@
     }
 
     .article h2 {
-      font-size: 1.4rem;
       margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
     }
 
     .article p {
+      margin: 0;
       font-size: 1rem;
       color: #475569;
-      margin: 0;
     }
 
     body.dark .article p {
@@ -154,7 +162,7 @@
     }
 
     .meta {
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       color: #64748b;
     }
 
@@ -162,77 +170,83 @@
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin-top: 5px;
     }
 
     .tag {
-      font-size: 0.75rem;
-      background: #e0e7ff;
-      color: #3730a3;
+      background: #dbeafe;
+      color: #1d4ed8;
       padding: 4px 10px;
+      font-size: 0.75rem;
       border-radius: 999px;
     }
 
     body.dark .tag {
-      background: #312e81;
-      color: #c7d2fe;
+      background: #1e40af;
+      color: #bfdbfe;
     }
 
     .author-info {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 12px;
+      margin-top: 8px;
     }
 
     .author-info img {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #cbd5e1;
     }
 
-    .article a.read-more {
+    .read-more {
       margin-top: 10px;
+      font-weight: 600;
       color: var(--accent);
-      font-weight: bold;
       text-decoration: none;
     }
 
-    .article a.read-more:hover {
+    .read-more:hover {
       text-decoration: underline;
     }
 
     .error-message {
-      text-align: center;
       color: crimson;
       font-weight: bold;
+      text-align: center;
     }
 
     .loader {
       text-align: center;
-      font-size: 1.2rem;
+      font-size: 1rem;
       color: gray;
-      padding-bottom: 2rem;
     }
 
     footer {
       text-align: center;
-      font-size: 0.85rem;
-      padding: 2rem 1rem;
       color: #94a3b8;
+      padding: 2rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    #topBtn {
+      display: none;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--accent-dark);
+      color: white;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
     }
 
     @media(max-width: 600px) {
-      header {
+      header, .controls {
         flex-direction: column;
-        gap: 1rem;
         text-align: center;
-      }
-      .controls {
-        flex-direction: column;
-        width: 100%;
+        gap: 1rem;
       }
       #searchInput {
         width: 100%;
@@ -244,12 +258,12 @@
   <header>
     <h1>SmartFeed</h1>
     <div class="controls">
-      <input type="text" id="searchInput" placeholder="🔍 Search by title..." />
+      <input type="text" id="searchInput" placeholder="🔍 Search by title..." aria-label="Search articles by title" />
       <button class="toggle-btn" id="toggleMode">🌙</button>
     </div>
   </header>
 
-  <nav class="categories" id="categoryList">
+  <nav class="categories" id="categoryList" aria-label="Article Categories">
     <button class="active" data-cat="web">Web Dev</button>
     <button data-cat="programming">Programming</button>
     <button data-cat="ai">AI</button>
@@ -265,7 +279,8 @@
     <div id="loader" class="loader" style="display:none;">🔄 Loading more articles...</div>
   </main>
 
- 
+  <button id="topBtn" aria-label="Scroll to top">↑ Top</button>
+
   <script>
     const feed = document.getElementById('newsFeed');
     const error = document.getElementById('error');
@@ -273,12 +288,14 @@
     const catBtns = document.querySelectorAll('[data-cat]');
     const modeToggle = document.getElementById("toggleMode");
     const loader = document.getElementById("loader");
+    const topBtn = document.getElementById("topBtn");
 
     let articles = [];
     let selected = 'web';
     let page = 1;
     let isLoading = false;
     let endReached = false;
+    let searchTimeout;
 
     const fetchArticles = async (tag, append = false) => {
       if (isLoading || endReached) return;
@@ -302,7 +319,7 @@
           articles = englishOnly;
           feed.innerHTML = "";
         }
-        renderArticles(englishOnly, append);
+        renderArticles(englishOnly);
         page++;
       } catch (err) {
         console.error(err.message);
@@ -312,7 +329,7 @@
       isLoading = false;
     };
 
-    const renderArticles = (data, append = false) => {
+    const renderArticles = (data) => {
       data.forEach((a) => {
         const card = document.createElement("div");
         card.className = "article";
@@ -321,7 +338,7 @@
           <p>${a.description || a.excerpt || "No description available."}</p>
           <div class="tags">${a.tag_list.map(tag => `<span class="tag">#${tag}</span>`).join('')}</div>
           <div class="author-info">
-            <img src="${a.user.profile_image}" alt="${a.user.name}" />
+            <img loading="lazy" src="${a.user.profile_image}" alt="${a.user.name || 'Author'}" />
             <div>
               <div class="meta">✍️ ${a.user.name}</div>
               <div class="meta">🗓️ ${new Date(a.published_at).toLocaleDateString()} · ⏱️ ${a.reading_time_minutes} min read</div>
@@ -346,26 +363,40 @@
     );
 
     search.addEventListener("input", () => {
-      const q = search.value.toLowerCase();
-      const results = articles.filter(a => a.title.toLowerCase().includes(q));
-      feed.innerHTML = "";
-      renderArticles(results);
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        const q = search.value.toLowerCase();
+        const results = articles.filter(a => a.title.toLowerCase().includes(q));
+        feed.innerHTML = "";
+        renderArticles(results);
+      }, 300);
     });
 
     modeToggle.addEventListener("click", () => {
       document.body.classList.toggle("dark");
-      modeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+      const isDark = document.body.classList.contains("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+      modeToggle.textContent = isDark ? "☀️" : "🌙";
     });
 
-    window.addEventListener("DOMContentLoaded", () => {
-      fetchArticles(selected);
+    topBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
     window.addEventListener("scroll", () => {
       const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      topBtn.style.display = scrollTop > 300 ? "block" : "none";
       if (scrollTop + clientHeight >= scrollHeight - 50) {
         fetchArticles(selected, true);
       }
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+        modeToggle.textContent = "☀️";
+      }
+      fetchArticles(selected);
     });
   </script>
 </body>
