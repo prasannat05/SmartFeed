@@ -1,26 +1,21 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SmartFeed</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-light: #f4f6f8;
+      --bg-light: #f8fafc;
       --bg-dark: #0f172a;
       --text-light: #1e293b;
-      --text-dark: #f9fafb;
+      --text-dark: #f8fafc;
       --accent: #3b82f6;
-      --accent-dark: #2563eb;
-      --card-bg: #ffffff;
-      --card-bg-dark: #1e293b;
-      --card-hover: #f1f5f9;
-      --shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
 
     * {
       box-sizing: border-box;
-      transition: all 0.3s ease;
     }
 
     body {
@@ -28,6 +23,7 @@
       font-family: 'Inter', sans-serif;
       background: var(--bg-light);
       color: var(--text-light);
+      transition: background 0.3s, color 0.3s;
     }
 
     body.dark {
@@ -36,220 +32,186 @@
     }
 
     header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: #1e293b;
+      color: white;
       position: sticky;
       top: 0;
-      background: inherit;
-      max-width: 1200px;
-      margin: auto;
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 100;
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid #e2e8f0;
+      z-index: 20;
     }
 
-    h1 {
+    header h1 {
+      font-family: 'Playfair Display', serif;
       font-size: 1.8rem;
-      font-weight: 800;
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.4rem;
+      cursor: pointer;
     }
 
     .controls {
       display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    #searchInput {
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 1px solid #d1d5db;
-      font-size: 1rem;
-      background: white;
-    }
-
-    body.dark #searchInput {
-      background: #1e293b;
-      border-color: #475569;
-      color: white;
-    }
-
-    .toggle-btn {
-      padding: 8px 14px;
-      font-size: 1rem;
-      background: var(--accent);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
-    }
-
-    .categories {
-      display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
+      gap: 1rem;
       padding: 1rem 2rem;
-    }
-
-    .categories button {
-      padding: 6px 16px;
-      border-radius: 999px;
       background: #e2e8f0;
+      justify-content: space-between;
+    }
+
+    body.dark .controls {
+      background: #1e293b;
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-btn {
+      padding: 10px 18px;
       border: none;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .categories button.active,
-    .categories button:hover {
-      background: var(--accent);
-      color: white;
-    }
-
-    body.dark .categories button {
       background: #334155;
       color: white;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
-    main {
-      max-width: 1000px;
-      margin: 1rem auto 3rem;
-      padding: 0 1rem;
+    .dropdown-content {
+      position: absolute;
+      top: 42px;
+      background: white;
+      min-width: 240px;
+      max-height: 300px;
+      overflow-y: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      display: none;
+      flex-direction: column;
+      z-index: 9;
+    }
+
+    .dropdown-content button {
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: flex;
+    }
+
+    input[type="text"] {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #94a3b8;
+      flex-grow: 1;
+      max-width: 300px;
     }
 
     .feed {
-      display: flex;
-      flex-direction: column;
+      padding: 1.5rem 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 1.5rem;
     }
 
     .article {
-      background: var(--card-bg);
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
-
-    .article:hover {
-      transform: translateY(-4px);
-      background: var(--card-hover);
+      background: white;
+      padding: 1.2rem;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      transition: 0.3s;
+      animation: fadeIn 0.4s ease-in-out;
     }
 
     body.dark .article {
-      background: var(--card-bg-dark);
-    }
-
-    .article h2 {
-      margin: 0;
-      font-size: 1.25rem;
-      font-weight: 700;
-    }
-
-    .article p {
-      margin: 0;
-      font-size: 1rem;
-      color: #475569;
-    }
-
-    body.dark .article p {
+      background: #1e293b;
       color: #cbd5e1;
     }
 
-    .meta {
-      font-size: 0.875rem;
-      color: #64748b;
+    .article h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      margin: 0.2rem 0 0.5rem;
     }
 
-    .tags {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .tag {
-      background: #dbeafe;
-      color: #1d4ed8;
-      padding: 4px 10px;
-      font-size: 0.75rem;
-      border-radius: 999px;
-    }
-
-    body.dark .tag {
-      background: #1e40af;
-      color: #bfdbfe;
+    .article p {
+      font-size: 0.95rem;
+      line-height: 1.6;
     }
 
     .author-info {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-top: 8px;
+      gap: 0.6rem;
+      margin-top: 0.8rem;
+      font-size: 0.85rem;
+      color: #64748b;
     }
 
     .author-info img {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      object-fit: cover;
     }
 
     .read-more {
-      margin-top: 10px;
-      font-weight: 600;
+      margin-top: 1rem;
+      display: inline-block;
       color: var(--accent);
+      font-weight: 600;
       text-decoration: none;
-    }
-
-    .read-more:hover {
-      text-decoration: underline;
-    }
-
-    .error-message {
-      color: crimson;
-      font-weight: bold;
-      text-align: center;
-    }
-
-    .loader {
-      text-align: center;
-      font-size: 1rem;
-      color: gray;
-    }
-
-    footer {
-      text-align: center;
-      color: #94a3b8;
-      padding: 2rem 1rem;
-      font-size: 0.9rem;
     }
 
     #topBtn {
       display: none;
       position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: var(--accent-dark);
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent);
       color: white;
-      padding: 10px 14px;
       border: none;
       border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 1.1rem;
       cursor: pointer;
+      z-index: 30;
     }
 
-    @media(max-width: 600px) {
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media screen and (max-width: 600px) {
       header, .controls {
         flex-direction: column;
-        text-align: center;
-        gap: 1rem;
+        align-items: flex-start;
       }
-      #searchInput {
+
+      input[type="text"] {
         width: 100%;
+        max-width: none;
+      }
+
+      .dropdown-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .feed {
+        padding: 1rem;
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -257,111 +219,122 @@
 <body>
   <header>
     <h1>SmartFeed</h1>
-    <div class="controls">
-      <input type="text" id="searchInput" placeholder="🔍 Search by title..." aria-label="Search articles by title" />
-      <button class="toggle-btn" id="toggleMode">🌙</button>
-    </div>
+    <button class="theme-toggle" id="modeToggle">🌙</button>
   </header>
 
-  <nav class="categories" id="categoryList" aria-label="Article Categories">
-    <button class="active" data-cat="web">Web Dev</button>
-    <button data-cat="programming">Programming</button>
-    <button data-cat="ai">AI</button>
-    <button data-cat="cloud">Cloud</button>
-    <button data-cat="javascript">JavaScript</button>
-    <button data-cat="career">Career</button>
-    <button data-cat="security">Security</button>
-  </nav>
+  <div class="controls">
+    <div class="dropdown">
+      <button class="dropdown-btn">Choose Category</button>
+      <div class="dropdown-content" id="categoryMenu">
+        <button data-category="webdev">🌐 Web Development</button>
+        <button data-category="machinelearning">🧠 Machine Learning</button>
+        <button data-category="cloud">☁️ Cloud</button>
+        <button data-category="career">👔 Career</button>
+        <button data-category="opensource">🔓 Open Source</button>
+        <button data-category="cybersecurity">🔐 Cybersecurity</button>
+        <button data-category="design">🎨 UI/UX</button>
+        <button data-category="mobile">📱 Mobile Dev</button>
+        <button data-category="ai">🤖 AI</button>
+        <button data-category="blockchain">⛓️ Blockchain</button>
+        <button data-category="trending">🔥 Trending</button>
+      </div>
+    </div>
+    <input type="text" id="searchInput" placeholder="Search articles..." />
+  </div>
 
-  <main>
-    <section id="newsFeed" class="feed"></section>
-    <div id="error" class="error-message"></div>
-    <div id="loader" class="loader" style="display:none;">🔄 Loading more articles...</div>
-  </main>
+  <main class="feed" id="feed"></main>
 
-  <button id="topBtn" aria-label="Scroll to top">↑ Top</button>
+  <button id="topBtn">↑ Top</button>
 
   <script>
-    const feed = document.getElementById('newsFeed');
-    const error = document.getElementById('error');
-    const search = document.getElementById('searchInput');
-    const catBtns = document.querySelectorAll('[data-cat]');
-    const modeToggle = document.getElementById("toggleMode");
-    const loader = document.getElementById("loader");
+    const feed = document.getElementById("feed");
+    const modeToggle = document.getElementById("modeToggle");
     const topBtn = document.getElementById("topBtn");
+    const search = document.getElementById("searchInput");
+    const categoryMenu = document.getElementById("categoryMenu");
 
     let articles = [];
-    let selected = 'web';
+    let selected = "webdev";
     let page = 1;
     let isLoading = false;
-    let endReached = false;
-    let searchTimeout;
 
-    const fetchArticles = async (tag, append = false) => {
-      if (isLoading || endReached) return;
+    const loadArticles = async () => {
+      if (isLoading) return;
       isLoading = true;
-      loader.style.display = "block";
-      error.textContent = '';
+
+      let url = selected === "trending"
+        ? `https://dev.to/api/articles?top=7&per_page=10&page=${page}`
+        : `https://dev.to/api/articles?tag=${selected}&per_page=10&page=${page}`;
+
       try {
-        const res = await fetch(`https://dev.to/api/articles?tag=${tag}&per_page=10&page=${page}`);
-        if (!res.ok) throw new Error("API error");
+        const res = await fetch(url);
         const data = await res.json();
-        const englishOnly = data.filter(a => a.language === 'en');
-        if (!englishOnly.length) {
-          endReached = true;
-          if (!append) error.textContent = "⚠️ No English articles found.";
-          loader.style.display = "none";
-          return;
-        }
-        if (append) {
-          articles = [...articles, ...englishOnly];
-        } else {
-          articles = englishOnly;
-          feed.innerHTML = "";
-        }
-        renderArticles(englishOnly);
-        page++;
+        articles.push(...data);
+        renderArticles(data);
       } catch (err) {
-        console.error(err.message);
-        error.textContent = "🚫 Could not fetch articles. Try again later.";
+        console.error("Error loading articles:", err);
       }
-      loader.style.display = "none";
+
       isLoading = false;
     };
 
-    const renderArticles = (data) => {
-      data.forEach((a) => {
+    const renderArticles = (list) => {
+      list.forEach(a => {
         const card = document.createElement("div");
         card.className = "article";
         card.innerHTML = `
           <h2>${a.title}</h2>
-          <p>${a.description || a.excerpt || "No description available."}</p>
-          <div class="tags">${a.tag_list.map(tag => `<span class="tag">#${tag}</span>`).join('')}</div>
+          <p>${a.description || "No description available."}</p>
           <div class="author-info">
-            <img loading="lazy" src="${a.user.profile_image}" alt="${a.user.name || 'Author'}" />
-            <div>
-              <div class="meta">✍️ ${a.user.name}</div>
-              <div class="meta">🗓️ ${new Date(a.published_at).toLocaleDateString()} · ⏱️ ${a.reading_time_minutes} min read</div>
-            </div>
+            <img loading="lazy" src="${a.user.profile_image}" alt="${a.user.name}" />
+            <span>${a.user.name}</span>
           </div>
-          <a class="read-more" href="${a.url}" target="_blank">Read Full Article →</a>
+          <a href="${a.url}" target="_blank" class="read-more">Read More →</a>
         `;
         feed.appendChild(card);
       });
     };
 
-    catBtns.forEach(btn =>
-      btn.addEventListener("click", () => {
-        catBtns.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        selected = btn.dataset.cat;
-        page = 1;
-        endReached = false;
-        search.value = "";
-        fetchArticles(selected, false);
-      })
-    );
+    modeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      const dark = document.body.classList.contains("dark");
+      localStorage.setItem("theme", dark ? "dark" : "light");
+      modeToggle.textContent = dark ? "☀️" : "🌙";
+    });
 
+    window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+        modeToggle.textContent = "☀️";
+      }
+      loadArticles();
+    });
+
+    categoryMenu.addEventListener("click", (e) => {
+      if (e.target.dataset.category) {
+        selected = e.target.dataset.category;
+        page = 1;
+        articles = [];
+        feed.innerHTML = "";
+        loadArticles();
+      }
+    });
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 300) topBtn.style.display = "block";
+      else topBtn.style.display = "none";
+
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        page++;
+        loadArticles();
+      }
+    });
+
+    topBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    let searchTimeout;
     search.addEventListener("input", () => {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
@@ -370,33 +343,6 @@
         feed.innerHTML = "";
         renderArticles(results);
       }, 300);
-    });
-
-    modeToggle.addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      const isDark = document.body.classList.contains("dark");
-      localStorage.setItem("theme", isDark ? "dark" : "light");
-      modeToggle.textContent = isDark ? "☀️" : "🌙";
-    });
-
-    topBtn.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-
-    window.addEventListener("scroll", () => {
-      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-      topBtn.style.display = scrollTop > 300 ? "block" : "none";
-      if (scrollTop + clientHeight >= scrollHeight - 50) {
-        fetchArticles(selected, true);
-      }
-    });
-
-    window.addEventListener("DOMContentLoaded", () => {
-      if (localStorage.getItem("theme") === "dark") {
-        document.body.classList.add("dark");
-        modeToggle.textContent = "☀️";
-      }
-      fetchArticles(selected);
     });
   </script>
 </body>
