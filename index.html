@@ -7,225 +7,366 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-light: #f8fafc;
-      --bg-dark: #0f172a;
+      --bg-light: #f4f7fa;
+      --bg-dark: #0d1117;
       --text-light: #1e293b;
-      --text-dark: #f8fafc;
-      --accent: #3b82f6;
-    }
+      --text-dark: #f4f7fa;
+      --accent: #6366f1;
+      --glass-light: rgba(255, 255, 255, 0.7);
+      --glass-dark: rgba(17, 25, 40, 0.7);
+      --blur: 14px;
+      --border-glass: rgba(255, 255, 255, 0.09);
+      --radius: 16px;
+      --shadow: 0 6px 24px rgba(0,0,0,0.12);
 
+      --rainbow-header: linear-gradient(270deg, #ff6ec4, #7873f5, #4ade80, #22d3ee, #ff6ec4);
+      --rainbow-btn: linear-gradient(90deg, #60a5fa 0%, #a78bfa 35%, #f472b6 67%, #34d399 100%, #06b6d4 0%);
+      --gradient-move-speed: 16s;
+    }
     * {
       box-sizing: border-box;
     }
-
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
       background: var(--bg-light);
       color: var(--text-light);
-      transition: background 0.3s, color 0.3s;
+      transition: background 0.35s, color 0.3s;
     }
-
     body.dark {
       background: var(--bg-dark);
       color: var(--text-dark);
     }
-
-    header {
+    header.animated-bg {
+      background: var(--rainbow-header);
+      background-size: 1200% 1200%;
+      animation: animatedGradient var(--gradient-move-speed) ease-in-out infinite;
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
-      background: #1e293b;
       color: white;
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
     }
-
+    @keyframes animatedGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
     header h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
+      font-size: 2rem;
+      letter-spacing: 1.5px;
+      filter: drop-shadow(0 1px 5px rgba(0,0,0,0.08));
     }
-
     .theme-toggle {
-      background: transparent;
       border: none;
+      outline: none;
+      background: transparent;
       color: white;
-      font-size: 1.4rem;
+      font-size: 2rem;
       cursor: pointer;
+      transition: transform 0.3s;
+      border-radius: 50%;
+      padding: 6px 12px;
     }
-
+    .theme-toggle:hover {
+      transform: scale(1.18) rotate(-8deg);
+      background: rgba(255,255,255,0.07);
+    }
     .controls {
       display: flex;
       flex-wrap: wrap;
       gap: 1rem;
-      padding: 1rem 2rem;
-      background: #e2e8f0;
+      padding: 1.2rem 2rem;
+      margin-bottom: 0;
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(var(--blur));
       justify-content: space-between;
+      border-bottom: 1px solid rgba(60,60,60,0.06);
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 20;
     }
-
     body.dark .controls {
-      background: #1e293b;
+      background: rgba(17, 25, 40, 0.65);
     }
-
     .dropdown {
       position: relative;
+      z-index: 30;
+      /* so its menu stacks above .controls/feed */
     }
-
-    .dropdown-btn {
-      padding: 10px 18px;
+    .dropdown-btn.animated-border {
+      padding: 12px 24px;
+      background: var(--rainbow-btn);
+      background-size: 400% 400%;
+      animation: animatedGradient 7s linear infinite;
       border: none;
-      background: #334155;
-      color: white;
+      color: #fff;
+      font-weight: 700;
       border-radius: 999px;
       cursor: pointer;
-      font-weight: bold;
+      transition: box-shadow 0.2s, transform 0.2s;
+      position: relative;
+      box-shadow: 0 2px 12px rgba(110,120,230,0.12);
+      z-index: 2;
+      letter-spacing: 0.2px;
     }
-
+    .dropdown-btn.animated-border:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 36px 0 rgba(72,59,216,0.18);
+    }
+    /* Full fix: super high z-index for category menu */
     .dropdown-content {
       position: absolute;
-      top: 42px;
-      background: white;
+      top: 52px;
+      left: 0;
       min-width: 240px;
-      max-height: 300px;
+      max-height: 320px;
       overflow-y: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      border-radius: 10px;
+      background: rgba(255,255,255,0.97);
+      border-radius: var(--radius);
+      box-shadow: 0 0 24px rgba(100,80,180,0.11);
       display: none;
       flex-direction: column;
-      z-index: 9;
+      border: 1.5px solid rgba(99,102,241,0.09);
+      backdrop-filter: blur(12px);
+      animation: fadeSlide 0.4s;
+      z-index: 9999 !important;
     }
-
+    body.dark .dropdown-content {
+      background: rgba(28,33,46,0.98);
+    }
+    .dropdown-content.show {
+      display: flex;
+      animation: fadeSlide 0.34s;
+    }
     .dropdown-content button {
+      padding: 1rem 1.4rem;
       background: none;
       border: none;
       text-align: left;
-      padding: 10px 16px;
-      font-size: 0.95rem;
+      font-size: 1rem;
+      transition: background 0.2s, padding 0.14s;
+      border-radius: 0;
+      font-weight: 500;
+      color: #464965;
       cursor: pointer;
+      letter-spacing: 0.2px;
     }
-
-    .dropdown:hover .dropdown-content {
-      display: flex;
+    .dropdown-content button:hover {
+      background: linear-gradient(90deg, #c3dafe 0%, #fef6fb 80%);
+      font-weight: 700;
+      color: #4f46e5;
+      padding-left: 2rem;
     }
-
+    body.dark .dropdown-content button {
+      color: #e0e7ef;
+    }
+    body.dark .dropdown-content button:hover {
+      background: linear-gradient(90deg, #292c36, #4338ca22 90%);
+      color: #a5b4fc;
+    }
     input[type="text"] {
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 1px solid #94a3b8;
-      flex-grow: 1;
+      padding: 13px 16px;
+      border-radius: 12px;
+      border: 1.7px solid #d1d5db;
       max-width: 300px;
+      font-size: 1rem;
+      transition: border-color 0.27s, box-shadow 0.3s;
+      background: rgba(255,255,255,0.92);
+      outline: none;
     }
-
+    input[type="text"]:focus {
+      border-color: #a78bfa;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.16);
+      background: #fff;
+    }
+    body.dark input[type="text"] {
+      background: #232b3b;
+      color: #c7d1fd;
+      border-color: #353e6f;
+    }
     .feed {
-      padding: 1.5rem 2rem;
+      padding: 2.7rem 2.3rem 1.3rem 2.3rem;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 2.2rem;
+      min-height: 60vh;
+      /* no z-index/position!! */
     }
-
     .article {
-      background: white;
-      padding: 1.2rem;
-      border-radius: 14px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-      transition: 0.3s;
-      animation: fadeIn 0.4s ease-in-out;
+      background: var(--glass-light);
+      border: 1.6px solid var(--border-glass);
+      backdrop-filter: blur(var(--blur));
+      border-radius: var(--radius);
+      padding: 1.5rem 1.5rem 1.1rem 1.5rem;
+      box-shadow: 0 6px 28px rgba(140, 130, 230, 0.13);
+      transition: 0.26s cubic-bezier(.4,2,.2,1);
+      position: static;
+      animation: fadeSlide 0.6s cubic-bezier(.4,2,.2,1);
+      overflow: hidden;
+      will-change: transform, box-shadow;
     }
-
+    .article:hover {
+      transform: translateY(-5px) scale(1.03) rotate(-0.3deg);
+      box-shadow: 0 12px 38px 0 rgba(114, 110, 221, 0.14);
+      border-color: #6366f1;
+    }
     body.dark .article {
-      background: #1e293b;
-      color: #cbd5e1;
+      background: var(--glass-dark);
+      border: 1.6px solid rgba(255, 255, 255, 0.05);
     }
-
     .article h2 {
       font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
-      margin: 0.2rem 0 0.5rem;
+      font-size: 1.32rem;
+      margin: 0 0 0.7rem 0;
+      color: #2b206b;
+      letter-spacing: .2px;
+      background: linear-gradient(90deg,#3453bb,#7873f5 60%, #ff6ec4 120%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 1px 6px rgba(120,100,200,0.03);
+      user-select: text;
     }
-
+    body.dark .article h2 {
+      background: linear-gradient(90deg,#f2e9fa 10%,#48cda3 100%);
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
     .article p {
-      font-size: 0.95rem;
+      font-size: 1.01rem;
+      color: #464965;
+      margin-bottom: 1.1rem;
       line-height: 1.6;
+      max-height: 74px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
     }
-
+    body.dark .article p {
+      color: #b3bdd7;
+    }
     .author-info {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      margin-top: 0.8rem;
-      font-size: 0.85rem;
+      gap: 0.68rem;
+      font-size: 0.95rem;
       color: #64748b;
+      margin-bottom: 12px;
     }
-
     .author-info img {
       width: 32px;
       height: 32px;
       border-radius: 50%;
+      border: 2px solid #e3eafd;
+      background: #bee7ff1a;
+      object-fit: cover;
     }
-
-    .read-more {
-      margin-top: 1rem;
+    body.dark .author-info {
+      color: #bce4fa9c;
+    }
+    body.dark .author-info img {
+      border: 2px solid #363f64;
+    }
+    .bookmark {
       display: inline-block;
-      color: var(--accent);
-      font-weight: 600;
-      text-decoration: none;
+      margin-top: 2px;
+      font-weight: 700;
+      font-size: 1.13rem;
+      cursor: pointer;
+      color: #facc15;
+      background: none;
+      border: none;
+      outline: none;
+      padding: 0 13px 0 0;
+      margin-bottom: 12px;
+      transition: color 0.17s;
+      filter: drop-shadow(0 1px 2px #facc1514);
     }
-
-    #topBtn {
+    .bookmark:hover {
+      color: #ffe066;
+      text-shadow: 0 1px 6px #fcffa388;
+    }
+    #topBtn.animated-border {
       display: none;
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--accent);
+      right: 22px;
+      bottom: 22px;
+      background: var(--rainbow-btn);
+      background-size: 400% 400%;
+      animation: animatedGradient 8s linear infinite;
       color: white;
+      border-radius: 50%;
       border: none;
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 1.1rem;
+      font-size: 1.5rem;
+      width: 54px; height: 54px;
+      box-shadow: 0 4px 22px rgba(81, 129, 254, 0.19);
+      transition: filter 0.18s, transform 0.23s;
+      z-index: 120;
       cursor: pointer;
-      z-index: 30;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    #topBtn.animated-border:hover {
+      filter: brightness(1.2) blur(0.1px);
+      transform: scale(1.13) rotate(-8deg);
     }
-
-    @media screen and (max-width: 600px) {
-      header, .controls {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      input[type="text"] {
-        width: 100%;
-        max-width: none;
-      }
-
-      .dropdown-btn {
-        width: 100%;
-        text-align: center;
-      }
-
+    .spinner {
+      display: none;
+      margin: 3rem auto 2rem auto;
+      border: 5.5px solid #eee;
+      border-top: 5.5px solid #6366f1;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg,rgba(255,255,255,0.13) 60%,transparent 100%);
+      backdrop-filter: blur(5px);
+      animation: spin 1.2s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(16px);}
+      to   { opacity: 1; transform: translateY(0);}
+    }
+    @media (max-width: 700px) {
       .feed {
-        padding: 1rem;
+        padding: 1.2rem !important;
         grid-template-columns: 1fr;
+      }
+      .article {
+        padding: 1.2rem 1.1rem 1rem 1.1rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .feed { gap: 1.05rem; }
+      .controls { padding: .7rem .2rem .7rem .7rem;}
+      header.animated-bg { padding: 1rem 1rem;}
+      .dropdown-content {
+        left: 0; right: 0; width: 99vw;
       }
     }
   </style>
 </head>
 <body>
-  <header>
+  <header class="animated-bg">
     <h1>SmartFeed</h1>
     <button class="theme-toggle" id="modeToggle">🌙</button>
   </header>
 
   <div class="controls">
     <div class="dropdown">
-      <button class="dropdown-btn">Choose Category</button>
+      <button class="dropdown-btn animated-border" id="categoryBtn">Choose Category</button>
       <div class="dropdown-content" id="categoryMenu">
+        <button data-category="bookmarks">⭐ Bookmarks</button>
         <button data-category="webdev">🌐 Web Development</button>
         <button data-category="machinelearning">🧠 Machine Learning</button>
         <button data-category="cloud">☁️ Cloud</button>
@@ -242,74 +383,102 @@
     <input type="text" id="searchInput" placeholder="Search articles..." />
   </div>
 
+  <div class="spinner" id="spinner"></div>
   <main class="feed" id="feed"></main>
-
-  <button id="topBtn">↑ Top</button>
+  <button id="topBtn" class="animated-border">↑</button>
 
   <script>
     const feed = document.getElementById("feed");
     const modeToggle = document.getElementById("modeToggle");
     const topBtn = document.getElementById("topBtn");
-    const search = document.getElementById("searchInput");
+    const searchInput = document.getElementById("searchInput");
     const categoryMenu = document.getElementById("categoryMenu");
+    const categoryBtn = document.getElementById("categoryBtn");
+    const spinner = document.getElementById("spinner");
 
     let articles = [];
     let selected = "webdev";
     let page = 1;
     let isLoading = false;
-
+    // Utility: Hide dropdown when clicking outside
+    window.addEventListener('click', (e) => {
+      if (!categoryMenu.contains(e.target) && !categoryBtn.contains(e.target)) {
+        categoryMenu.classList.remove("show");
+      }
+    });
     const loadArticles = async () => {
       if (isLoading) return;
       isLoading = true;
-
-      let url = selected === "trending"
+      spinner.style.display = "block";
+      if (selected === "bookmarks") {
+        const stored = JSON.parse(localStorage.getItem("bookmarked") || "[]");
+        feed.innerHTML = "";
+        renderArticles(stored, true);
+        spinner.style.display = "none";
+        isLoading = false;
+        return;
+      }
+      const url = selected === "trending"
         ? `https://dev.to/api/articles?top=7&per_page=10&page=${page}`
         : `https://dev.to/api/articles?tag=${selected}&per_page=10&page=${page}`;
-
       try {
         const res = await fetch(url);
         const data = await res.json();
         articles.push(...data);
         renderArticles(data);
-      } catch (err) {
-        console.error("Error loading articles:", err);
+        page++;
+      } catch (e) {
+        console.error("Failed to load:", e);
       }
-
+      spinner.style.display = "none";
       isLoading = false;
     };
-
-    const renderArticles = (list) => {
+    const renderArticles = (list, replace = false) => {
+      if (replace) feed.innerHTML = "";
       list.forEach(a => {
         const card = document.createElement("div");
         card.className = "article";
+        const stored = JSON.parse(localStorage.getItem("bookmarked") || "[]");
+        const isBookmarked = stored.some(b => b.id === a.id);
         card.innerHTML = `
           <h2>${a.title}</h2>
           <p>${a.description || "No description available."}</p>
           <div class="author-info">
-            <img loading="lazy" src="${a.user.profile_image}" alt="${a.user.name}" />
+            <img src="${a.user.profile_image}" />
             <span>${a.user.name}</span>
           </div>
-          <a href="${a.url}" target="_blank" class="read-more">Read More →</a>
+          <span class="bookmark" data-id="${a.id}">${isBookmarked ? "★ Remove" : "☆ Bookmark"}</span>
         `;
+        card.querySelector('.bookmark').addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleBookmark(a, e.target);
+        });
+        card.addEventListener("click", () => {
+          window.open(a.url, "_blank");
+        });
         feed.appendChild(card);
       });
     };
-
-    modeToggle.addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      const dark = document.body.classList.contains("dark");
-      localStorage.setItem("theme", dark ? "dark" : "light");
-      modeToggle.textContent = dark ? "☀️" : "🌙";
-    });
-
-    window.addEventListener("DOMContentLoaded", () => {
-      if (localStorage.getItem("theme") === "dark") {
-        document.body.classList.add("dark");
-        modeToggle.textContent = "☀️";
+    const toggleBookmark = (article, btn) => {
+      let saved = JSON.parse(localStorage.getItem("bookmarked") || "[]");
+      const exists = saved.some(b => b.id === article.id);
+      if (exists) {
+        saved = saved.filter(b => b.id !== article.id);
+        btn.innerText = "☆ Bookmark";
+      } else {
+        saved.push(article);
+        btn.innerText = "★ Remove";
       }
-      loadArticles();
+      localStorage.setItem("bookmarked", JSON.stringify(saved));
+      if (selected === "bookmarks") {
+        feed.innerHTML = "";
+        renderArticles(saved, true);
+      }
+    };
+    categoryBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      categoryMenu.classList.toggle("show");
     });
-
     categoryMenu.addEventListener("click", (e) => {
       if (e.target.dataset.category) {
         selected = e.target.dataset.category;
@@ -317,33 +486,38 @@
         articles = [];
         feed.innerHTML = "";
         loadArticles();
+        categoryMenu.classList.remove("show");
       }
     });
-
+    modeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      const dark = document.body.classList.contains("dark");
+      localStorage.setItem("theme", dark ? "dark" : "light");
+      modeToggle.textContent = dark ? "☀️" : "🌙";
+    });
+    searchInput.addEventListener("input", () => {
+      const q = searchInput.value.toLowerCase();
+      const filtered = articles.filter(a => a.title.toLowerCase().includes(q));
+      renderArticles(filtered, true);
+    });
     window.addEventListener("scroll", () => {
-      if (window.scrollY > 300) topBtn.style.display = "block";
-      else topBtn.style.display = "none";
-
-      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
-        page++;
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 124) {
         loadArticles();
       }
+      topBtn.style.display = window.scrollY > 300 ? "block" : "none";
     });
-
     topBtn.addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
-
-    let searchTimeout;
-    search.addEventListener("input", () => {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        const q = search.value.toLowerCase();
-        const results = articles.filter(a => a.title.toLowerCase().includes(q));
-        feed.innerHTML = "";
-        renderArticles(results);
-      }, 300);
+    window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+        modeToggle.textContent = "☀️";
+      }
+      loadArticles();
     });
   </script>
 </body>
 </html>
+
+
